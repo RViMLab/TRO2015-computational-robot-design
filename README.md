@@ -1,6 +1,11 @@
 # CTR Project Documentation
-###This file contains the documentation for the CTR project code.
-####run_optimization.m
+This repository contains software to optimise concentric tube robots based on task and anatomical constraints. If you find this software useful, please cite our
+paper:
+C. Bergeles, A. Gosline, N. V. Vasilyev, P. Codd, P. J. del Nido, and P. E. Dupont, "Concentric tube robot design and optimization based on task and anatomical constraints",
+IEEE Trans. Robotics, vol. 33, no. 4, pp. 901-915, 2017.
+
+##This file contains the documentation for the CTR project code.
+##run_optimization.m
 
 Loads all the data
 ```
@@ -55,7 +60,7 @@ The array ctr_ is passed to CTROptimize
 [ctr_ err] = CTROptimize(ctr_, H, anatomy, targets, vector, base, mopts);
 ```
 
-####CTRCreateStructure.m
+##CTRCreateStructure.m
 This file will receive CTR signature structure and populates all the parameters based on relationships between the tubes
 S: The potential curvature changing points that should be examined.**Need to clarify**
 
@@ -121,7 +126,7 @@ The second element is the same as first element except for the value of theta an
 s = unique(s);
 ```
 
-###CTRCreateCTRFromFile
+##CTRCreateCTRFromFile
 CTRCREATECTRFROMFILE reads the data from DIREC for iteration IND and creates a simple concentric tube robot CTR_ and also return the base location.
 
 The below code loads the file from direc, selects the ctr as per target_idx and pass it on to CTRCreateSimpleCTRFromFullCTR.
@@ -133,7 +138,7 @@ load([direc, files(ind).name]);
   ctr_simple = CTRCreateSimpleCTRFromFullCTR(ctr_selected);
 ```
 
-###CTRCreateSimpleCTRFromFullCTR.m
+##CTRCreateSimpleCTRFromFullCTR.m
 This is invoked from CTRCreateCTRFromFile.m,which read the data file and loads the full ctr. The full ctr is passed to CTRCreateSimpleCTRFromFullCTR to get a compact version of CTR
 ```
 while i <= n_segments
@@ -172,7 +177,7 @@ while i <= n_segments
 __but is 3rd element of full_ctr is copied to the first element of simple ctr? as in line -
  ```simpleCTR(simple_ctr_segments).u = fullCTR(i+2).u;```
 
- ###CTRCreateMinimizationVectorFromCTR
+ ##CTRCreateMinimizationVectorFromCTR
  CTRCREATEMINIMIZATIONVECTORFROMCTR(CTR, MOPTS) creates a minimization vector given a concentric tube robot CTR and directions on what to minimize for MOPTS. A simple CTR is input to this method.
 
 Loops through mopts( array of string containing optimization parameters- length , lengths_curved, curvatures)
@@ -216,7 +221,7 @@ if isfield(x_, 'lengths')
   if isfield(x_, 'curvatures')
     x = [x; x_.curvatures(:)];
 ```
-####CTRCreateCTRFromMinimizationVector
+##CTRCreateCTRFromMinimizationVector
 The minimization vector return by the above method CTRCreateMinimizationVectorFromCTR is read by this method. A simple ctr and mopts(string array of optimization params)are also an input to this method.
 
 mopts is updated with sorted value of mopts and ctr is initialised with simple ctr(ctr_)
