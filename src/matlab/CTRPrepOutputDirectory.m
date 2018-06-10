@@ -16,7 +16,7 @@ function output_directory = CTRPrepOutputDirectory()
 %
 
   id_str = datestr(now, 'yyyymmddTHHMMSS');
-  output_directory = strcat(to_dir(get_parent_directory()), to_dir('data'), to_dir(id_str));
+  output_directory = strcat(to_dir(get_parent_directory()), '../', to_dir('data'), to_dir(id_str));
   
   if ~exist(output_directory, 'dir')
     [~, ~] = mkdir(output_directory);

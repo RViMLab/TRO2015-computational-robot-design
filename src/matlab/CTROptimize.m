@@ -55,10 +55,10 @@ function [ctr_ err] = CTROptimize(ctr_, HG, anatomy, targets, vector, base, mopt
   
   % Erode the anatomy image by the size of the largest tube
   [~, ~, ctr] = CTRKinematics(ctr_, HG); % needed for erode anatomy
-  [anatomy.binary anatomy.bwdist] = erode_anatomy(anatomy.binary, [ctr(:).diameter]);
+  [anatomy.binary, anatomy.bwdist] = erode_anatomy(anatomy.binary, [ctr(:).diameter]);
   
   % Create the minimization vector
-  x_ = CTRCreateMinimizationVectorFromCTR(ctr_, pos(HG), mopts.variables);
+  x_ = CTRCreateMinimizationVectorFromCTR(ctr_, HG(1:3, 4), mopts.variables);
   
   % Base bounds
   bnds = CTRCreateMinimizationBounds(ctr_, base.workspace, mopts.variables);
@@ -68,7 +68,7 @@ function [ctr_ err] = CTROptimize(ctr_, HG, anatomy, targets, vector, base, mopt
   
   if strcmp(mopts.method, 'patternsearch')
     opts = psoptimset();
-    [x err] = patternsearch(@(x_) target_res(x_, ctr_, HG, targets, vector, anatomy, mopts, output_directory, torsional_compliance), ...
+    [x, err] = patternsearch(@(x_) target_res(x_, ctr_, HG, targets, vector, anatomy, mopts, output_directory, torsional_compliance), ...
                             x_, ...
                             [], [], [], [], ...
                             bnds(1, :), ...
@@ -77,7 +77,7 @@ function [ctr_ err] = CTROptimize(ctr_, HG, anatomy, targets, vector, base, mopt
   elseif strcmp(mopts.method, 'fminsearchbnd')
     opts = optimset(); % 'DiffMinChange', 1e-6);
     % Target_res is Equation (20) in paper
-    [x err] = fminsearchbnd(@(x) target_res(x, ctr_, HG, targets, vector, anatomy, mopts, output_directory, torsional_compliance), ...
+    [x, err] = fminsearchbnd(@(x) target_res(x, ctr_, HG, targets, vector, anatomy, mopts, output_directory, torsional_compliance), ...
                             x_, ...
                             bnds(1, :), ...
                             bnds(2, :), ...
@@ -100,12 +100,12 @@ function res = target_res(x_, ctr_, HG, targets, vector, anatomy, mopts, output_
   global workspace;
   
   % Grab the parameters from x_ and update the ctr structure
-  [ctr_ T] = CTRCreateCTRFromMinimizationVector(x_, ctr_, mopts.variables);
+  [ctr_, T] = CTRCreateCTRFromMinimizationVector(x_, ctr_, mopts.variables);
   HG(1:3, 4) = T(1:3);
   
   % Solve the inverse kinematics by optimizing for the angles and lengths
   % This is Equation (18)
-  [h res ctr] = CTREvaluate(ctr_, HG, anatomy, targets, vector, mopts.method, torsional_compliance);
+  [h, res, ctr] = CTREvaluate(ctr_, HG, anatomy, targets, vector, mopts.method, torsional_compliance);
   fprintf('Individual errors: %f\n', res);
   % Penalize inability to reach the target
   res = sum(res);
@@ -121,17 +121,23 @@ function res = target_res(x_, ctr_, HG, targets, vector, anatomy, mopts, output_
   
   res = res + max(lengths) + sum([ctr_(:).u]);
   
-  % Save results in the file
+    % Save results in the file
   if debug
+    
+    figure(1);
+    CTRPlot(ctr{1});
     hold on;
+    plot_anatomy(anatomy.filename);
+    quiver3(targets(1), targets(2), targets(3), vector(1), vector(2), vector(3), 0.005, 'LineWidth', 2)
     plot_workspace(workspace);
+    plot_target_points(targets);
     hold off;
-    str = sprintf('Current error: %f, Iteration: %d', res, iter);
-    title(str);
-    view(4, 4);
-    % axis([.04 .11 .06 .12 .08 .15]); 
+    title('Anatomical and Surgical Constraints');
+    xlabel('x')
+    ylabel('y')
+    zlabel('z')
+    view(45, 45);
     save_figure(h, [to_dir(output_directory) 'images/minimization_' int2strz(iter, 6)], 'png');   
-    % save_figure(h, [to_dir(output_directory) 'images/minimization_' int2strz(iter, 6)], 'fig'); 
     pause(0.1);
   end
   

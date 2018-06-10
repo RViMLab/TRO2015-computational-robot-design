@@ -8,7 +8,7 @@
 % Output is a surface model in SI units (m) and a binary image of the
 % anatomy for collision detection
 
-function [binarymat, FV] = CTRCreateBinaryFromSTL(filelocationstring,plotstlstring, plotbinarystring);
+function [binarymat, FV] = CTRCreateBinaryAnatomyFromSTL(filelocationstring,plotstlstring, plotbinarystring);
 
 if nargin < 2
     plotstlstring = 'noo';
@@ -31,9 +31,9 @@ Pts = data.vertices;
 % Rotate the stl to align it with the co-ordinat axis if it seems useful
 Ptsvec = [Pts ones(length(Pts),1)];
 
-rotmatx = rotx(0.8);
-rotmaty = roty(0.9);
-rotmatz = rotz(0.0);
+rotmatx = eye(4); % rotx(0.0);
+rotmaty = eye(4); % roty(0.0);
+rotmatz = eye(4); % rotz(0.0);
 
 Ptsvecrotx = (rotmatx*rotmaty*rotmatz*Ptsvec')';
 
@@ -59,7 +59,8 @@ figure;
 axis equal;
 %pbaspect ([1 1 1]);
 rotate3d on;
-nice3d;
+grid on;
+box on;
 trisurf(Tri,Pts(:,1),Pts(:,2),Pts(:,3),'EdgeColor',[ 0 0 0 ],'FaceColor',[1 0 0]);
 view(0,0);
 hold on;
@@ -73,9 +74,9 @@ binarymat = ones(matrix_max(1), matrix_max(2), matrix_max(3));
 binarymat = logical(binarymat);
 
 for i = 1:round(length(Pts))
-    locX = round(Pts(i,1));
-    locY = round(Pts(i,2));
-    locZ = round(Pts(i,3));
+    locX = max(round(Pts(i,1)), 1);
+    locY = max(round(Pts(i,2)), 1);
+    locZ = max(round(Pts(i,3)), 1);
     binarymat(locX, locY, locZ) = 0;
 end
     

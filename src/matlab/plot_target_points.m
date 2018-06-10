@@ -32,4 +32,5 @@ function h = plot_target_points(points, linestyle)
   h = plot_point_cloud(points', linestyle);
   set(h, 'MarkerSize', 20);
   hold off
+
 end

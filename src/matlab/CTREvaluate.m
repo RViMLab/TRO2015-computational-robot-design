@@ -93,24 +93,24 @@ function [h res ctr] = CTREvaluate(ctr_, HG, anatomy, targets, vector, method, t
 
       end
 
-      hold on;
-      fig = plot_point_cloud(X, '*k');
-      set(fig, 'MarkerSize', 25);
-      if ~isempty(vector)
-        quiver3(target(1), target(2), target(3), ...
-                vector(1), vector(2), vector(3), 0.5e-2);
-        quiver3(end_effector(1, 4), end_effector(2, 4), end_effector(3, 4), ...
-                end_effector(1, 3), end_effector(2, 3), end_effector(3, 3), 0.5e-2);
-      end
-      CTRPlot(ctr{i});
-      plot_point_cloud(pos(end_effector), 'r.');
-      hold off;
-      view(4, 4);
-      % axis([.04 .11 .06 .12 .08 .15]); 
-      title(num2str(sum(res)));
-      % grid on;
-      % box on;
-      pause(0.1);
+%       hold on;
+%       fig = plot_point_cloud(X, '*k');
+%       set(fig, 'MarkerSize', 25);
+%       if ~isempty(vector)
+%         quiver3(target(1), target(2), target(3), ...
+%                 vector(1), vector(2), vector(3), 0.5e-2);
+%         quiver3(end_effector(1, 4), end_effector(2, 4), end_effector(3, 4), ...
+%                 end_effector(1, 3), end_effector(2, 3), end_effector(3, 3), 0.5e-2);
+%       end
+%       CTRPlot(ctr{i});
+%       plot_point_cloud(pos(end_effector), 'r.');
+%       hold off;
+%       view(4, 4);
+%       % axis([.04 .11 .06 .12 .08 .15]); 
+%       title(num2str(sum(res)));
+%       % grid on;
+%       % box on;
+%       pause(0.1);
   
     end
     

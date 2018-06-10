@@ -30,11 +30,8 @@ function [h data] = plot_anatomy(filename)
       filename = strcat(to_dir(pathname), filename);
   end
 
-  h = gcf;
-  
   anatomy = load_anatomy(filename);
   
-  hold on
   trisurf(anatomy.tri, anatomy.pts(:, 1), anatomy.pts(:, 2), anatomy.pts(:,3), ...
          'FaceVertexCData', [0.2 0 1],...
          'EdgeColor','none', ...
@@ -48,5 +45,5 @@ function [h data] = plot_anatomy(filename)
   
   axis equal
   box on
-  hold off
+
 end

@@ -44,6 +44,16 @@ function [anatomy_out distance_trans] = erode_anatomy(anatomy, diameters, tolera
     
     for i = 1:size(anatomy, 3)
       
+      % Hack to fill in space
+      for k = 1:6
+        anatomy_out(:, :, i, j) = imdilate(anatomy(:, :, i), el);
+        anatomy(:, :, i) = anatomy_out(:, :, i, j);
+      end
+      for k = 1:6
+        anatomy_out(:, :, i, j) = imerode(anatomy(:, :, i), el);
+        anatomy(:, :, i) = anatomy_out(:, :, i, j);
+      end
+      
       anatomy_out(:, :, i, j) = imerode(anatomy(:, :, i), el);
       distance_trans(:, :, i, j) = 1./(bwdist(~anatomy_out(:, :, i, j)) + eps);
       

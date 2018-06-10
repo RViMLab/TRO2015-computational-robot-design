@@ -25,8 +25,6 @@ function h = plot_workspace(base)
       error('PLOT_WORKSPACE: At least one argument is required.');
   end
 
-  h = gcf;
-  
   mn_x = min(base.workspace(:, 1));
   mx_x = max(base.workspace(:, 1));
   mn_y = min(base.workspace(:, 2));
